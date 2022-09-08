@@ -24,4 +24,4 @@ const listen = async (options: Deno.ListenOptions): Promise<void> => {
   }
 };
 
-export { Bansa, listen };
+export { Bansa, listen, routers };
