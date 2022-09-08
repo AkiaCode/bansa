@@ -16,9 +16,9 @@ const listen = async (options: Deno.ListenOptions): Promise<void> => {
       const router = routers.get(new URL(requestEvent.request.url).pathname);
 
       if (router) {
-        requestEvent.respondWith(router(requestEvent.request));
+        await requestEvent.respondWith(router(requestEvent.request));
       } else {
-        requestEvent.respondWith(new Response('Not Found', { status: 404 }));
+        await requestEvent.respondWith(new Response('Not Found', { status: 404 }));
       }
     }
   }
