@@ -1,3 +1,4 @@
+import { serve, ServeInit } from "https://deno.land/std@0.154.0/http/server.ts";
 // deno-lint-ignore-file no-explicit-any
 const routers = new Map<string, any>();
 
@@ -10,18 +11,15 @@ const Bansa: any = new Proxy({}, {
   }
 });
 
-const listen = async (options: Deno.ListenOptions): Promise<void> => {
-  for await (const conn of Deno.listen(options)) {
-    for await (const requestEvent of Deno.serveHttp(conn)) {
-      const router = routers.get(new URL(requestEvent.request.url).pathname);
+const listen = (ServeInit: ServeInit = {}): Promise<void> => serve((request: Request) => {
+    const router = routers.get(new URL(request.url).pathname);
 
-      if (router) {
-        await requestEvent.respondWith(router(requestEvent.request));
-      } else {
-        await requestEvent.respondWith(new Response('Not Found', { status: 404 }));
-      }
+    if (router) {
+      return router(request);
+    } else {
+      return new Response('Not Found', { status: 404 })
     }
-  }
-};
+}, ServeInit);
 
-export { Bansa, listen, routers };
+
+export { Bansa, listen };
